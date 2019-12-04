@@ -14,6 +14,7 @@ fn main() -> Result<()> {
         1 => days::day_one::process(),
         2 => days::day_two::process(),
         3 => days::day_three::process(),
+        4 => days::day_four::process(),
         _ => {
             println!("Unknown day: {}", day_choice);
             Ok(())

@@ -28,7 +28,7 @@ fn run_program(program: &mut Vec<usize>) {
 pub fn process() -> Result<()> {
     let input = util::read_input("input/day_two.txt")?;
     let input = input[0]
-        .split(",")
+        .split(',')
         .map(|d| d.parse::<usize>().unwrap())
         .collect::<Vec<_>>();
 
@@ -37,7 +37,7 @@ pub fn process() -> Result<()> {
         input_copy[1] = i;
         input_copy[2] = j;
         run_program(&mut input_copy);
-        if input_copy[0] == 19690720 {
+        if input_copy[0] == 19_690_720 {
             println!("Result {}", (i * 100) + j);
             return Ok(());
         }

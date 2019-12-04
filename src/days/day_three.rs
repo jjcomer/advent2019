@@ -18,10 +18,8 @@ lazy_static! {
 
 type DistanceMap = HashMap<(i32, i32), i32>;
 
-fn update_distance(distances: &mut DistanceMap, point: &(i32, i32), count: i32) {
-    if !distances.contains_key(point) {
-        distances.insert(point.clone(), count);
-    }
+fn update_distance(distances: &mut DistanceMap, point: (i32, i32), count: i32) {
+    distances.entry(point).or_insert(count);
 }
 
 fn build_points(directions: Vec<String>) -> (DistanceMap, HashSet<(i32, i32)>) {
@@ -40,19 +38,19 @@ fn build_points(directions: Vec<String>) -> (DistanceMap, HashSet<(i32, i32)>) {
             _ => panic!("Unknown direction {}", d),
         };
         for _ in 0..n {
-            counter = counter + 1;
+            counter += 1;
             let (x1, y1) = current_location;
             let new_location = (x1 + xo, y1 + yo);
-            current_location = new_location.clone();
-            points.insert(new_location.clone());
-            update_distance(&mut distance, &new_location, counter);
+            current_location = new_location;
+            points.insert(new_location);
+            update_distance(&mut distance, new_location, counter);
         }
     }
-    return (distance, points);
+    (distance, points)
 }
 
-fn parse_points(raw_points: &String) -> Vec<String> {
-    raw_points.split(",").map(|s| s.to_owned()).collect()
+fn parse_points(raw_points: &str) -> Vec<String> {
+    raw_points.split(',').map(|s| s.to_owned()).collect()
 }
 
 // fn calc_distance((x, y): &(i32, i32)) -> i32 {
@@ -60,9 +58,9 @@ fn parse_points(raw_points: &String) -> Vec<String> {
 //     x.abs() + y.abs()
 // }
 
-fn calc_distance_2(d1: &DistanceMap, d2: &DistanceMap, point: &(i32, i32)) -> i32 {
-    let w1 = d1.get(point).unwrap();
-    let w2 = d2.get(point).unwrap();
+fn calc_distance_2(d1: &DistanceMap, d2: &DistanceMap, point: (i32, i32)) -> i32 {
+    let w1 = d1.get(&point).unwrap();
+    let w2 = d2.get(&point).unwrap();
 
     w1 + w2
 }
@@ -71,7 +69,7 @@ pub fn process() -> Result<()> {
     let input = util::read_input("input/day_three.txt")?;
     let input = input
         .iter()
-        .map(parse_points)
+        .map(|x| parse_points(x))
         .map(build_points)
         .collect::<Vec<_>>();
     let (distance_a, wire_a) = &input[0];
@@ -84,7 +82,7 @@ pub fn process() -> Result<()> {
 
     let point: i32 = wire_a
         .intersection(wire_b)
-        .map(|p| calc_distance_2(&distance_a, &distance_b, p))
+        .map(|p| calc_distance_2(&distance_a, &distance_b, *p))
         .min()
         .unwrap();
 

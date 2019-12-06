@@ -34,14 +34,17 @@ fn check_long_pairs(password: &[i8]) -> bool {
     count == 2
 }
 
-fn ascending_test(password: &[i8], (i1, i2): &(usize, usize)) -> bool {
-    password[*i1] <= password[*i2]
-}
-
 fn check_ascending(password: &[i8]) -> bool {
-    (0..5)
-        .zip(1..6)
-        .map(|x| ascending_test(password, &x))
+    password
+        .iter()
+        .scan(-1 as i8, |state, x| {
+            if *state <= *x {
+                *state = *x;
+                Some(true)
+            } else {
+                Some(false)
+            }
+        })
         .all(|x| x)
 }
 

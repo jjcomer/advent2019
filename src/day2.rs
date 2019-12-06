@@ -1,7 +1,4 @@
-use crate::util;
-use anyhow::Result;
-
-fn run_program(program: &mut Vec<usize>) {
+fn run_program(program: &mut [usize]) {
     let mut pointer = 0;
     loop {
         let current_instruction = program[pointer];
@@ -25,23 +22,34 @@ fn run_program(program: &mut Vec<usize>) {
     }
 }
 
-pub fn process() -> Result<()> {
-    let input = util::read_input("input/day_two.txt")?;
-    let input = input[0]
+#[aoc_generator(day2)]
+pub fn input_generator(input: &str) -> Vec<usize> {
+    input
         .split(',')
         .map(|d| d.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
+        .collect()
+}
 
+#[aoc(day2, part1)]
+pub fn solve_part1(input: &Vec<usize>) -> usize {
+    let mut input = input.clone();
+    input[1] = 12;
+    input[2] = 2;
+
+    run_program(&mut input);
+    input[0]
+}
+
+#[aoc(day2, part2)]
+pub fn solve_part2(input: &Vec<usize>) -> usize {
     for (i, j) in iproduct!(0..99, 0..99) {
         let mut input_copy = input.clone();
         input_copy[1] = i;
         input_copy[2] = j;
         run_program(&mut input_copy);
         if input_copy[0] == 19_690_720 {
-            println!("Result {}", (i * 100) + j);
-            return Ok(());
+            return (i * 100) + j;
         }
     }
-    println!("Couldn't find the answer");
-    Ok(())
+    panic!("Unable to find answer")
 }

@@ -1,5 +1,3 @@
-use crate::util;
-use anyhow::Result;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
@@ -17,6 +15,7 @@ lazy_static! {
 }
 
 type DistanceMap = HashMap<(i32, i32), i32>;
+type PointSet = HashSet<(i32, i32)>;
 
 fn update_distance(distances: &mut DistanceMap, point: (i32, i32), count: i32) {
     distances.entry(point).or_insert(count);
@@ -53,10 +52,10 @@ fn parse_points(raw_points: &str) -> Vec<String> {
     raw_points.split(',').map(|s| s.to_owned()).collect()
 }
 
-// fn calc_distance((x, y): &(i32, i32)) -> i32 {
-//     //println!("Intersection: {} {} {}", x, y, x.abs() + y.abs());
-//     x.abs() + y.abs()
-// }
+fn calc_distance((x, y): &(i32, i32)) -> i32 {
+    //println!("Intersection: {} {} {}", x, y, x.abs() + y.abs());
+    x.abs() + y.abs()
+}
 
 fn calc_distance_2(d1: &DistanceMap, d2: &DistanceMap, point: (i32, i32)) -> i32 {
     let w1 = d1.get(&point).unwrap();
@@ -65,28 +64,33 @@ fn calc_distance_2(d1: &DistanceMap, d2: &DistanceMap, point: (i32, i32)) -> i32
     w1 + w2
 }
 
-pub fn process() -> Result<()> {
-    let input = util::read_input("input/day_three.txt")?;
-    let input = input
-        .iter()
+#[aoc_generator(day3)]
+pub fn input_generator(input: &str) -> Vec<(DistanceMap, PointSet)> {
+    input
+        .lines()
         .map(|x| parse_points(x))
         .map(build_points)
-        .collect::<Vec<_>>();
+        .collect()
+}
+
+#[aoc(day3, part1)]
+pub fn solve_part1(input: &[(DistanceMap, PointSet)]) -> i32 {
+    let (_, wire_a) = &input[0];
+    let (_, wire_b) = &input[1];
+    wire_a
+        .intersection(wire_b)
+        .map(calc_distance)
+        .min()
+        .unwrap()
+}
+
+#[aoc(day3, part2)]
+pub fn solve_part2(input: &[(DistanceMap, PointSet)]) -> i32 {
     let (distance_a, wire_a) = &input[0];
     let (distance_b, wire_b) = &input[1];
-    // let point: i32 = wire_a
-    //     .intersection(wire_b)
-    //     .map(calc_distance)
-    //     .min()
-    //     .unwrap();
-
-    let point: i32 = wire_a
+    wire_a
         .intersection(wire_b)
         .map(|p| calc_distance_2(&distance_a, &distance_b, *p))
         .min()
-        .unwrap();
-
-    println!("Shortest path: {}", point);
-
-    Ok(())
+        .unwrap()
 }

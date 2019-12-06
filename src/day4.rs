@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 fn split_number(password: i32) -> Vec<i8> {
     let str_number = format!("{}", password);
     str_number
@@ -8,13 +6,13 @@ fn split_number(password: i32) -> Vec<i8> {
         .collect()
 }
 
-// fn pair_test(password: &[i8], (i1, i2): &(usize, usize)) -> bool {
-//     password[*i1] == password[*i2]
-// }
+fn pair_test(password: &[i8], (i1, i2): &(usize, usize)) -> bool {
+    password[*i1] == password[*i2]
+}
 
-// fn check_pairs(password: &[i8]) -> bool {
-//     (0..5).zip(1..6).any(|x| pair_test(password, &x))
-// }
+fn check_pairs(password: &[i8]) -> bool {
+    (0..5).zip(1..6).any(|x| pair_test(password, &x))
+}
 
 fn check_long_pairs(password: &[i8]) -> bool {
     let mut count = 1;
@@ -48,14 +46,29 @@ fn check_ascending(password: &[i8]) -> bool {
         .all(|x| x)
 }
 
-pub fn process() -> Result<()> {
-    let passwords = (387_638..919_123)
-        .map(split_number)
-        //.filter(|x| check_pairs(x))
+#[aoc_generator(day4)]
+pub fn input_generator(input: &str) -> (i32, i32) {
+    let numbers = input
+        .split('-')
+        .map(|x| x.parse::<i32>().unwrap())
+        .collect::<Vec<i32>>();
+    (numbers[0], numbers[1])
+}
+
+#[aoc(day4, part1)]
+pub fn solve_part1((low, high): &(i32, i32)) -> usize {
+    (*low..*high)
+        .map(|x| split_number(x))
+        .filter(|x| check_pairs(x))
+        .filter(|x| check_ascending(x))
+        .count()
+}
+
+#[aoc(day4, part2)]
+pub fn solve_part2((low, high): &(i32, i32)) -> usize {
+    (*low..*high)
+        .map(|x| split_number(x))
         .filter(|x| check_long_pairs(x))
         .filter(|x| check_ascending(x))
-        .count();
-
-    println!("Found {} passwords", passwords);
-    Ok(())
+        .count()
 }

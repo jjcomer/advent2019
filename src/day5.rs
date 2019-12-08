@@ -112,14 +112,14 @@ fn run_program(program: &mut [i32], input: i32) -> i32 {
 }
 
 #[aoc(day5, part1)]
-pub fn solve_part1(input: &Vec<i32>) -> i32 {
-    let mut input = input.clone();
+pub fn solve_part1(input: &[i32]) -> i32 {
+    let mut input = input.to_owned();
     run_program(&mut input, 1)
 }
 
 #[aoc(day5, part2)]
-pub fn solve_part2(input: &Vec<i32>) -> i32 {
-    let mut input = input.clone();
+pub fn solve_part2(input: &[i32]) -> i32 {
+    let mut input = input.to_owned();
     run_program(&mut input, 5)
 }
 

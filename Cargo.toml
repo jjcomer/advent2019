@@ -11,6 +11,6 @@ bench = false
 anyhow = '1.0'
 itertools = '0.8'
 lazy_static = '1.4'
-petgraph = '0.4'
 aoc-runner = '0.2'
 aoc-runner-derive = '0.2'
+permute = '0.1.0'

@@ -39,7 +39,7 @@ fn parse_points(raw_points: &str) -> Vec<String> {
     raw_points.split(',').map(|s| s.to_owned()).collect()
 }
 
-fn calc_distance((x, y): &(i32, i32)) -> i32 {
+fn calc_distance((x, y): (i32, i32)) -> i32 {
     //println!("Intersection: {} {} {}", x, y, x.abs() + y.abs());
     x.abs() + y.abs()
 }
@@ -66,7 +66,7 @@ pub fn solve_part1(input: &[(DistanceMap, PointSet)]) -> i32 {
     let (_, wire_b) = &input[1];
     wire_a
         .intersection(wire_b)
-        .map(calc_distance)
+        .map(|x| calc_distance(*x))
         .min()
         .unwrap()
 }

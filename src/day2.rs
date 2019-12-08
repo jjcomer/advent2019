@@ -31,8 +31,8 @@ pub fn input_generator(input: &str) -> Vec<usize> {
 }
 
 #[aoc(day2, part1)]
-pub fn solve_part1(input: &Vec<usize>) -> usize {
-    let mut input = input.clone();
+pub fn solve_part1(input: &[usize]) -> usize {
+    let mut input = input.to_owned();
     input[1] = 12;
     input[2] = 2;
 
@@ -41,9 +41,9 @@ pub fn solve_part1(input: &Vec<usize>) -> usize {
 }
 
 #[aoc(day2, part2)]
-pub fn solve_part2(input: &Vec<usize>) -> usize {
+pub fn solve_part2(input: &[usize]) -> usize {
     for (i, j) in iproduct!(0..99, 0..99) {
-        let mut input_copy = input.clone();
+        let mut input_copy = input.to_owned();
         input_copy[1] = i;
         input_copy[2] = j;
         run_program(&mut input_copy);

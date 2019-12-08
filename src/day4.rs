@@ -47,27 +47,30 @@ fn check_ascending(password: &[i8]) -> bool {
 }
 
 #[aoc_generator(day4)]
-pub fn input_generator(input: &str) -> (i32, i32) {
-    let numbers = input
+pub fn input_generator(input: &str) -> Vec<i32> {
+    input
         .split('-')
         .map(|x| x.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>();
-    (numbers[0], numbers[1])
+        .collect::<Vec<i32>>()
 }
 
 #[aoc(day4, part1)]
-pub fn solve_part1((low, high): &(i32, i32)) -> usize {
+pub fn solve_part1(input: &[i32]) -> usize {
+    let low = input.get(0).unwrap();
+    let high = input.get(1).unwrap();
     (*low..*high)
-        .map(|x| split_number(x))
+        .map(split_number)
         .filter(|x| check_pairs(x))
         .filter(|x| check_ascending(x))
         .count()
 }
 
 #[aoc(day4, part2)]
-pub fn solve_part2((low, high): &(i32, i32)) -> usize {
+pub fn solve_part2(input: &[i32]) -> usize {
+    let low = input.get(0).unwrap();
+    let high = input.get(1).unwrap();
     (*low..*high)
-        .map(|x| split_number(x))
+        .map(split_number)
         .filter(|x| check_long_pairs(x))
         .filter(|x| check_ascending(x))
         .count()

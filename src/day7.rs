@@ -31,8 +31,13 @@ fn to_index(i: i32) -> usize {
     i.try_into().unwrap()
 }
 
-fn run_program(program: &mut [i32], mut input: Vec<i32>) -> i32 {
-    let mut pointer = 0;
+enum IntCodeResult {
+    Halt(i32),
+    Input(i32, i32),
+}
+
+fn run_program(program: &mut [i32], pointer: i32, mut input: Vec<i32>) -> IntCodeResult {
+    let mut pointer = pointer;
     let mut output = 0;
     loop {
         let current_instruction = parse_instruction(program[to_index(pointer)]);
@@ -106,7 +111,7 @@ fn run_program(program: &mut [i32], mut input: Vec<i32>) -> i32 {
                 }
                 pointer += 4
             }
-            99 => return output,
+            99 => return IntCodeResult::Halt(output),
             _ => panic!("Unknown op code {:?}", current_instruction),
         };
     }
@@ -115,11 +120,16 @@ fn run_program(program: &mut [i32], mut input: Vec<i32>) -> i32 {
 fn run_series<'a>(program: Vec<i32>, series: impl Iterator<Item = &'a i32>) -> i32 {
     let mut output = 0;
     for phase in series {
-        //print!("{} ", phase);
-        output = run_program(&mut program.clone(), vec![output, *phase])
+        match run_program(&mut program.clone(), 0, vec![output, *phase]) {
+            IntCodeResult::Halt(o) => output = o,
+            IntCodeResult::Input(_, _) => (),
+        }
     }
-    //println!(" = {}", output);
     output
+}
+
+fn run_series_2<'a>(program: Vec<i32>, series: impl Iterator<Item = &'a i32>) -> i32 {
+    0
 }
 
 #[aoc(day7, part1)]
@@ -127,6 +137,14 @@ pub fn solve_part1(input: &[i32]) -> i32 {
     let series = (0..5).collect::<Vec<i32>>();
     permutations_of(&series)
         .map(|x| run_series(input.to_owned(), x))
+        .max()
+        .unwrap()
+}
+
+pub fn solve_part2(input: &[i32]) -> i32 {
+    let series = (5..10).collect::<Vec<i32>>();
+    permutations_of(&series)
+        .map(|x| run_series_2(input.to_owned(), x))
         .max()
         .unwrap()
 }

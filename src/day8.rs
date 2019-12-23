@@ -7,8 +7,8 @@ pub fn input_generator(input: &str) -> Vec<i32> {
 }
 
 fn compare_images(a: &&[i32], b: &&[i32]) -> std::cmp::Ordering {
-    let a_ones = a.into_iter().filter(|x| **x == 0).count();
-    let b_ones = b.into_iter().filter(|x| **x == 0).count();
+    let a_ones = a.iter().filter(|x| **x == 0).count();
+    let b_ones = b.iter().filter(|x| **x == 0).count();
 
     a_ones.cmp(&b_ones)
 }
@@ -25,8 +25,8 @@ pub fn solve_part1(input: &[i32]) -> usize {
     }
     layers.sort_by(compare_images);
     let biggest = layers.first().unwrap();
-    let ones = biggest.into_iter().filter(|x| **x == 1).count();
-    let twos = biggest.into_iter().filter(|x| **x == 2).count();
+    let ones = biggest.iter().filter(|x| **x == 1).count();
+    let twos = biggest.iter().filter(|x| **x == 2).count();
 
     ones * twos
 }
@@ -46,7 +46,7 @@ pub fn solve_part2(input: &[i32]) -> usize {
     let layer_size = 6 * 25;
     let layer_count = input.len() / layer_size;
 
-    print!("\n");
+    println!();
 
     for x in 0..layer_size {
         let pixel = gen_pixel(input, x, layer_size, layer_count);
@@ -57,9 +57,9 @@ pub fn solve_part2(input: &[i32]) -> usize {
             print!(" ");
         }
         if (x + 1) % 25 == 0 {
-            print!("\n");
+            println!();
         }
     }
-    print!("\n");
+    println!();
     0
 }

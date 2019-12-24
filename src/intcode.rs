@@ -59,13 +59,18 @@ pub type Output = Vec<i64>;
 
 pub enum IntCodeResult {
     Halt(Output),
-    Input(i64, Output),
+    Input(i64, i64, Output),
 }
 
-pub fn run_program(program: &mut Program, pointer: i64, mut input: Vec<i64>) -> IntCodeResult {
+pub fn run_program(
+    program: &mut Program,
+    pointer: i64,
+    relative_base: i64,
+    mut input: Vec<i64>,
+) -> IntCodeResult {
     let mut pointer = pointer;
     let mut output = Vec::new();
-    let mut relative_base = 0;
+    let mut relative_base = relative_base;
     loop {
         let current_instruction = parse_instruction(program[&to_index(pointer)]);
         // println!(
@@ -97,7 +102,7 @@ pub fn run_program(program: &mut Program, pointer: i64, mut input: Vec<i64>) -> 
                     program.insert(a, to_insert);
                     pointer += 2;
                 } else {
-                    return IntCodeResult::Input(pointer, output);
+                    return IntCodeResult::Input(pointer, relative_base, output);
                 }
             }
             4 => {
@@ -183,7 +188,7 @@ mod tests {
             .map(|d| d.parse::<i64>().unwrap())
             .collect::<Vec<i64>>();
         let mut program = input_generator(&input);
-        match run_program(&mut program, 0, Vec::new()) {
+        match run_program(&mut program, 0, 0, Vec::new()) {
             IntCodeResult::Halt(output) => assert_eq!(expected, output),
             _ => panic!("Unexpected Input Request"),
         }
@@ -193,7 +198,7 @@ mod tests {
     fn example2() {
         let input = "1102,34915192,34915192,7,4,7,99,0";
         let mut program = input_generator(&input);
-        match run_program(&mut program, 0, Vec::new()) {
+        match run_program(&mut program, 0, 0, Vec::new()) {
             IntCodeResult::Halt(output) => {
                 let str_num = format!("{}", output[0]);
                 assert_eq!(16, str_num.len());
@@ -207,7 +212,7 @@ mod tests {
         let input = "104,1125899906842624,99";
         let expected = vec![1125899906842624];
         let mut program = input_generator(&input);
-        match run_program(&mut program, 0, Vec::new()) {
+        match run_program(&mut program, 0, 0, Vec::new()) {
             IntCodeResult::Halt(output) => assert_eq!(expected, output),
             _ => panic!("Unxepected Input Request"),
         }

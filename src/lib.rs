@@ -6,6 +6,7 @@ extern crate aoc_runner_derive;
 extern crate itertools;
 
 pub mod day1;
+pub mod day11;
 pub mod day12;
 pub mod day2;
 pub mod day3;

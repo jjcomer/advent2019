@@ -9,9 +9,9 @@ pub fn input_generator(input: &str) -> intcode::Program {
 fn run_series<'a>(program: intcode::Program, series: impl Iterator<Item = &'a i64>) -> i64 {
     let mut output = 0;
     for phase in series {
-        match intcode::run_program(&mut program.clone(), 0, vec![output, *phase]) {
+        match intcode::run_program(&mut program.clone(), 0, 0, vec![output, *phase]) {
             intcode::IntCodeResult::Halt(o) => output = o[0],
-            intcode::IntCodeResult::Input(_, _) => (),
+            intcode::IntCodeResult::Input(_, _, _) => (),
         }
     }
     output

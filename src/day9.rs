@@ -9,7 +9,7 @@ pub fn input_generator(input: &str) -> Program {
 #[aoc(day9, part1)]
 pub fn solve_part1(input: &Program) -> i64 {
     let mut input = input.to_owned();
-    match run_program(&mut input, 0, vec![1]) {
+    match run_program(&mut input, 0, 0, vec![1]) {
         IntCodeResult::Halt(output) => {
             println!("{:?}", output);
             output[0]
@@ -21,7 +21,7 @@ pub fn solve_part1(input: &Program) -> i64 {
 #[aoc(day9, part2)]
 pub fn solve_part2(input: &Program) -> i64 {
     let mut input = input.to_owned();
-    match run_program(&mut input, 0, vec![2]) {
+    match run_program(&mut input, 0, 0, vec![2]) {
         IntCodeResult::Halt(output) => {
             println!("{:?}", output);
             output[0]

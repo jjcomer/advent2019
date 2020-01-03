@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::cmp::Ordering;
+use std::collections::HashMap;
 
 #[derive(Default, PartialEq, Eq, Debug, Copy, Clone)]
 pub struct Body {
@@ -8,12 +9,6 @@ pub struct Body {
 }
 
 impl Body {
-    fn apply_velocity(mut self) {
-        for i in 0..3 {
-            self.position[i] += self.velocity[i];
-        }
-    }
-
     fn compute_energy(self) -> i64 {
         self.position.iter().map(|x| x.abs()).sum::<i64>()
             * self.velocity.iter().map(|x| x.abs()).sum::<i64>()
@@ -71,7 +66,7 @@ pub fn generate_input(input: &str) -> Coord {
 
 fn process(cycles: i64, planets: &mut Coord) -> i64 {
     //println!("Cycle: 0 Planets: {:?}", planets);
-    for cycle in 0..cycles {
+    for _cycle in 0..cycles {
         let p_copy = planets.to_owned();
         for mut a in planets.iter_mut() {
             for b in p_copy.iter() {
@@ -92,13 +87,38 @@ pub fn solve_part1(input: &Coord) -> i64 {
     process(1000, &mut planets)
 }
 
-fn compare_positions(a: &Coord, b: &Coord) -> bool {
-    a.iter().zip(b.iter()).all(|x| x.0.position == x.1.position)
+fn check_for_periods(
+    periods: &mut HashMap<usize, i64>,
+    original: &Coord,
+    current: &Coord,
+    dimension: usize,
+    cycle: i64,
+) {
+    for (i, x) in original.iter().enumerate() {
+        if !periods.contains_key(&i) {
+            let body = current.get(i).unwrap();
+            if x.position[dimension] == body.position[dimension] && body.velocity[dimension] == 0 {
+                // println!(
+                //     "Found cycle for {:?} {} on cycle: {}",
+                //     current.get(i).unwrap(),
+                //     dimension,
+                //     cycle
+                // );
+                periods.insert(i, cycle);
+            }
+        }
+
+        
+    }
 }
 
-pub fn solve_part2(input: &Coord) -> i64 {
+#[aoc(day12, part2)]
+pub fn solve_part2(input: &Coord) -> usize {
     let mut planets = input.to_owned();
     let mut counter = 0;
+    let mut x_cycles = HashMap::new();
+    let mut y_cycles = HashMap::new();
+    let mut z_cycles = HashMap::new();
     loop {
         let p_copy = planets.to_owned();
         for mut a in planets.iter_mut() {
@@ -110,12 +130,46 @@ pub fn solve_part2(input: &Coord) -> i64 {
             apply_velocity(planets.get_mut(i).unwrap());
         }
         counter += 1;
-        if compare_positions(&planets, input) {
+        check_for_periods(&mut x_cycles, input, &planets, 0, counter);
+        check_for_periods(&mut y_cycles, input, &planets, 1, counter);
+        check_for_periods(&mut z_cycles, input, &planets, 2, counter);
+
+        if x_cycles.len() == 4 && y_cycles.len() == 4 && z_cycles.len() == 4 {
             break;
         }
         //println!("Cycle: {} Planets: {:?}", cycle, planets);
     }
-    counter
+
+    println!("{:?} {:?} {:?}", x_cycles, y_cycles, z_cycles);
+
+    x_cycles
+        .values()
+        .chain(y_cycles.values())
+        .chain(z_cycles.values())
+        .fold(0, |acc, x| {
+            if acc == 0 {
+                *x as usize
+            } else {
+                println!("{} {}", x, acc);
+                lcm(*x as usize, acc)
+            }
+        })
+}
+
+fn lcm(a: usize, b: usize) -> usize {
+    let div = gcd(a, b);
+    (a / div) * b
+}
+
+fn gcd(a: usize, b: usize) -> usize {
+    let mut a = a;
+    let mut b = b;
+    while b != 0 {
+        let t = b;
+        b = a % b;
+        a = t
+    }
+    a
 }
 
 #[cfg(test)]
@@ -134,12 +188,6 @@ mod tests {
         );
     }
 
-    // #[test]
-    // fn example2() {
-    //     let input = "<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>";
-    //     assert_eq!(process(1, &mut generate_input(&input)), 1940);
-    // }
-
     #[test]
     fn example3() {
         let input = "<x=-8, y=-10, z=0>\n<x=5, y=5, z=10>\n<x=2, y=-7, z=3>\n<x=9, y=-8, z=-3>";
@@ -147,8 +195,14 @@ mod tests {
     }
 
     #[test]
-    fn example2() {
+    fn example4() {
         let input = "<x=-8, y=-10, z=0>\n<x=5, y=5, z=10>\n<x=2, y=-7, z=3>\n<x=9, y=-8, z=-3>";
         assert_eq!(solve_part2(&generate_input(&input)), 4686774924);
+    }
+
+    #[test]
+    fn example5() {
+        let input = "<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>";
+        assert_eq!(solve_part2(&generate_input(&input)), 2772);
     }
 }

@@ -42,10 +42,10 @@ type Map = HashMap<Coord, Colour>;
 
 fn move_bot(current_direction: &Direction, (x, y): &Coord) -> Coord {
     match current_direction {
-        Direction::Up => (x.clone(), y + 1),
-        Direction::Left => (x - 1, y.clone()),
-        Direction::Down => (x.clone(), y - 1),
-        Direction::Right => (x + 1, y.clone()),
+        Direction::Up => (*x, y + 1),
+        Direction::Left => (x - 1, *y),
+        Direction::Down => (*x, y - 1),
+        Direction::Right => (x + 1, *y),
     }
 }
 
@@ -135,8 +135,8 @@ pub fn solve_part2(input: &Program) -> usize {
     let max_y = map.keys().map(|x| x.1).max().unwrap();
 
     println!("X  {} .. Y {}", max_x, max_y);
-    for y in 0..max_y + 1 {
-        for x in 0..max_x + 1 {
+    for y in 0..=max_y {
+        for x in 0..=max_x {
             match check_colour(&map, &(x, y)) {
                 Colour::Black => print!(" "),
                 Colour::White => print!("X"),

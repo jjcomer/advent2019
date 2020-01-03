@@ -40,11 +40,11 @@ fn apply_velocity(planet: &mut Body) {
     }
 }
 
-pub type Coord = Vec<Body>;
+pub type Coord = [Body];
 //<x=-1, y=0, z=2>
 
 #[aoc_generator(day12)]
-pub fn generate_input(input: &str) -> Coord {
+pub fn generate_input(input: &str) -> Vec<Body> {
     let reg = Regex::new(r"^<x=([-\d]+), y=([-\d]+), z=([-\d]+)>$").unwrap();
 
     input
@@ -107,8 +107,6 @@ fn check_for_periods(
                 periods.insert(i, cycle);
             }
         }
-
-        
     }
 }
 

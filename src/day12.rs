@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::cmp::Ordering;
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 #[derive(Default, PartialEq, Eq, Debug, Copy, Clone)]
@@ -95,7 +96,7 @@ fn check_for_periods(
     cycle: i64,
 ) {
     for (i, x) in original.iter().enumerate() {
-        if !periods.contains_key(&i) {
+        if let Entry::Vacant(v) = periods.entry(i) {
             let body = current.get(i).unwrap();
             if x.position[dimension] == body.position[dimension] && body.velocity[dimension] == 0 {
                 // println!(
@@ -104,7 +105,7 @@ fn check_for_periods(
                 //     dimension,
                 //     cycle
                 // );
-                periods.insert(i, cycle);
+                v.insert(cycle);
             }
         }
     }

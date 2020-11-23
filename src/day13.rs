@@ -115,6 +115,7 @@ pub fn solve_part2(input: &Program) -> usize {
                 if 0 != count_blocks(&output) {
                     println!("Hmm, expected no blocks... found {}", count_blocks(&output));
                 }
+                render_screen(&mut screen, &output);
                 return find_score(&output);
             }
             IntCodeResult::Input(new_pointer, new_relative_index, output) => {

@@ -1,7 +1,7 @@
 [package]
 name = 'advent'
 version = '0.1.0'
-authors = ['Josh Comer <jcomer@cvent.com>']
+authors = ['Josh Comer <joshjcomer@gmail.com>']
 edition = '2018'
 
 [lib]
@@ -9,9 +9,10 @@ bench = false
 
 [dependencies]
 anyhow = '1.0'
-itertools = '0.8'
+itertools = '0.9'
 lazy_static = '1.4'
 aoc-runner = '0.3'
 aoc-runner-derive = '0.3'
-permute = '0.1.0'
+permute = '0.1'
 regex = '1'
+cached = '0.21'
